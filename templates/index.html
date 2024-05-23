@@ -1,0 +1,117 @@
+# Trabajo realizado por:
+# Nestor David Steven Cespedes Castiblanco
+# Codigo: 29408
+# Proyecto Final de Investigacion de Operaciones
+# Clase 9AN - 2024-1 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métodos de Decisión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .mejor-opcion {
+            font-weight: bold;
+            color: blue;
+        }
+        .opcion {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Métodos de Decisión</h1>
+    <form id="decisionForm" method="post">
+        <label for="n">Número de filas (n):</label>
+        <input type="number" id="n" name="n" min="0" step="1" required><br><br>
+        
+        <label for="m">Número de columnas (m):</label>
+        <input type="number" id="m" name="m" min="0" step="1" required><br><br>
+
+        <button type="button" onclick="createMatrix()">Crear Matriz</button><br><br>
+
+        <div id="matriz"></div>
+
+        <label for="alfa">Valor de α para el Método Hurwicz:</label>
+        <input type="number" step="0.01" id="alfa" name="alfa" min="0" max="1" required><br><br>
+
+        <button type="submit">Calcular</button>
+        <button type="button" onclick="refreshForm()">Refresh</button>
+    </form>
+
+    <div id="resultados">
+        {% if matriz is not none %}
+            <h2>Matriz Ingresada:</h2>
+            {% for i in range(matriz.shape[0]) %}
+                <div class="opcion">Opción #{{ i + 1 }} {{ matriz[i] }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if resultados is not none %}
+            <h2>Resultados:</h2>
+            <p><strong>Método Laplace:</strong> {{ resultados['laplace'][0] }} - <span class="mejor-opcion">El mejor Resultado es la Opción #{{ resultados['laplace'][1] + 1 }}</span></p>
+            <p><strong>Método Hurwicz:</strong> {{ resultados['hurwicz'][0] }} - <span class="mejor-opcion">El mejor Resultado es la Opción #{{ resultados['hurwicz'][1] + 1 }}</span></p>
+            <p><strong>Método Savage:</strong> {{ resultados['savage'][0] }} - <span class="mejor-opcion">El mejor Resultado es la Opción #{{ resultados['savage'][1] + 1 }}</span></p>
+            <p><strong>Método Optimista:</strong> {{ resultados['optimista'][0] }} - <span class="mejor-opcion">El mejor Resultado es la Opción #{{ resultados['optimista'][1] + 1 }}</span></p>
+            <p><strong>Método Pesimista:</strong> {{ resultados['pesimista'][0] }} - <span class="mejor-opcion">El mejor Resultado es la Opción #{{ resultados['pesimista'][1] + 1 }}</span></p>
+        {% endif %}
+    </div>
+
+    <script>
+        function createMatrix() {
+            let n = document.getElementById('n').value;
+            let m = document.getElementById('m').value;
+            let matrizDiv = document.getElementById('matriz');
+            matrizDiv.innerHTML = '';
+
+            // Crear la tabla
+            let table = document.createElement('table');
+            table.border = '1';
+            let headerRow = document.createElement('tr');
+
+            // Primera celda vacía
+            let emptyCell = document.createElement('th');
+            headerRow.appendChild(emptyCell);
+
+            // Crear encabezados de columnas
+            for (let j = 1; j <= m; j++) {
+                let headerCell = document.createElement('th');
+                headerCell.textContent = `Criterio ${j}`;
+                headerRow.appendChild(headerCell);
+            }
+            table.appendChild(headerRow);
+
+            // Crear filas con encabezados de filas
+            for (let i = 1; i <= n; i++) {
+                let row = document.createElement('tr');
+                let headerCell = document.createElement('th');
+                headerCell.textContent = `Objeto ${i}`;
+                row.appendChild(headerCell);
+
+                // Crear celdas de entrada
+                for (let j = 1; j <= m; j++) {
+                    let cell = document.createElement('td');
+                    let input = document.createElement('input');
+                    input.type = 'number';
+                    input.name = `matriz_${i-1}_${j-1}`;
+                    input.step = '0.01';
+                    input.required = true;
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+
+            matrizDiv.appendChild(table);
+        }
+
+        function refreshForm() {
+            document.getElementById('decisionForm').reset();
+            document.getElementById('matriz').innerHTML = '';
+            document.getElementById('resultados').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
